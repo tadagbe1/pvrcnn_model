@@ -137,11 +137,17 @@ class VoxelBackBone8x(nn.Module):
             batch_dict:
                 encoded_spconv_tensor: sparse tensor
         """
-        voxel_features, voxel_coords = batch_dict['voxel_features'], batch_dict['voxel_coords']
+        voxel_features = batch_dict['voxel_features']
+        voxel_coords = batch_dict['voxel_coords']
         batch_size = batch_dict['batch_size']
+
+        # Ensure numpy arrays are converted to tensors
+        voxel_features = torch.as_tensor(voxel_features, dtype=torch.float32)
+        voxel_coords = torch.as_tensor(voxel_coords, dtype=torch.int32)
+
         input_sp_tensor = spconv.SparseConvTensor(
-            features=voxel_features,
-            indices=voxel_coords.int(),
+        features=voxel_features,
+            indices=voxel_coords,
             spatial_shape=self.sparse_shape,
             batch_size=batch_size
         )
